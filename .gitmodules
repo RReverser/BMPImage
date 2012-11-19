@@ -1,0 +1,6 @@
+[submodule "jDataView"]
+	path = jDataView
+	url = https://github.com/vjeux/jDataView.git
+[submodule "jParser"]
+	path = jParser
+	url = https://github.com/vjeux/jParser.git

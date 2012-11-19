@@ -1,0 +1,22 @@
+body {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border: none;
+    padding: 2pt;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+}
+
+#images {
+    margin-top: 2em;
+}
+
+#images table td:first-child {
+    font-weight: bold;
+}

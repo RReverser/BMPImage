@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Javascript BMP Parsing Demo</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script type="text/javascript" src="jDataView/src/jdataview.js"></script>
+    <script type="text/javascript" src="jParser/src/jparser.js"></script>
+    <script type="text/javascript" src="bmpimage2.js"></script>
+    <script type="text/javascript">
+    window.addEventListener('load', function() {
+        function bmpMetaToTable(obj) {
+            var table = document.createElement('table'),
+                value;
+            
+            for(var index in obj) {
+                if(obj.hasOwnProperty(index) && (value = obj[index])) {
+                    if (value instanceof Object) {
+                        if(Object.getPrototypeOf(value) === Object.prototype) {
+                            value = bmpMetaToTable(value);
+                            if(!value.rows.length) continue;
+                        } else {
+                            continue;
+                        }
+                    }
+                    
+                    var row = table.insertRow(-1);
+                    
+                    row.insertCell(-1).innerHTML = index;
+
+                    value instanceof HTMLElement
+                    ? row.insertCell(-1).appendChild(value)
+                    : row.insertCell(-1).innerHTML = value;
+                }
+            }
+            
+            return table;
+        }
+
+        function bmpDisplay() {
+            var canvas = document.createElement('canvas');
+            this.drawToCanvas(canvas);
+            
+            var row = document.getElementById('images').insertRow(1);
+            row.insertCell(-1).appendChild(bmpMetaToTable(this.meta));
+            row.insertCell(-1).appendChild(canvas);
+        }
+        
+        document.getElementById('urlLoad').addEventListener('click', function() {
+            BMPImage.readFrom(document.getElementById('url').value, bmpDisplay);
+        });
+        
+        document.getElementById('file').addEventListener('change', function() {
+            // files list as array
+            var files = Array.prototype.slice.call(this.files);
+
+            // accept field doesn't work in some browsers so we create own RegExp from it's value for file list filtering
+            if (this.accept) {
+                var acceptRegExp = new RegExp('^(' + this.accept.replace(/\*/, '.*').replace(/,/, '|') + ')$');
+                files = files.filter(function(file) { return acceptRegExp.test(file.type) });
+            }
+
+            files.forEach(function(file) { BMPImage.readFrom(file, bmpDisplay) });
+        });
+    });
+    </script>
+</head>
+<body>
+    <label for="url">Enter URL:&nbsp;</label><input type="url" id="url" value="image.bmp" /><input id="urlLoad" type="button" value="Load" /><br />
+    <label for="file">Select images:&nbsp;</label><input type="file" id="file" multiple accept="image/bmp,image/*-bmp" /><br />
+    <table id="images">
+    	<thead>
+            <tr>
+            	<th>Meta Data</th>
+            	<th>Image</th>
+            </tr>
+        </thead>
+    	<tbody>
+       </tbody>
+    </table>
+</body>
+</html>
